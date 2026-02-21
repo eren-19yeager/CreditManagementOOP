@@ -14,12 +14,16 @@ Admin::Admin(string id, string name, string pass, System *s)
     sys = s;
 }
 
+void Admin::display() {
+    cout << "Admin : " << id << " " << name << endl;
+}
+
 bool Admin::login(string pass) {
     return pass == password;
 }
 
 void Admin::addStudent(string id, string name) {
-    sys->students.push_back(Student(id, name));
+    sys->students.push_back(Student(id, name, sys->maxCreditsAllowed, 9));
 }
 
 void Admin::addFaculty(string id, string name) {
@@ -39,24 +43,65 @@ void Admin::addCourse(string id, string name) {
 }
 
 void Admin::enrollStudent(string studentID, string courseID) {
-    for (auto &s : sys->students) {
-        if (s.getId() == studentID) {
-            s.enroll(courseID);
+    int credits = 0;
+    for (auto &c : sys->courses) {
+        if (c.getCode() == courseID) {
+            credits = c.getCredits();
+            break;
         }
     }
+    for (auto &s : sys->students) {
+        if (s.getId() == studentID) {
+            s.enroll(courseID, credits);
+            sys->enroll(studentID, courseID);
+            return;
+        }
+    }
+    cout << "Student or course not found.\n";
+}
+
+void Admin::assignFacultyToCourse(string facultyID, string courseID) {
+    for (auto &c : sys->courses) {
+        if (c.getCode() == courseID) {
+            c.assignFaculty(facultyID);
+            cout << "Faculty " << facultyID << " assigned to " << courseID << ".\n";
+            return;
+        }
+    }
+    cout << "Course not found.\n";
+}
+
+void Admin::setCreditLimit(int limit) {
+    sys->maxCreditsAllowed = limit;
+    cout << "Credit limit set to " << limit << " (for new students).\n";
+}
+
+void Admin::manageCapacity(string courseID, int newCapacity) {
+    for (auto &c : sys->courses) {
+        if (c.getCode() == courseID) {
+            c.setCapacity(newCapacity);
+            cout << "Capacity for " << courseID << " set to " << newCapacity << ".\n";
+            return;
+        }
+    }
+    cout << "Course not found.\n";
+}
+
+static void displayPerson(Person &p) {
+    p.display();
 }
 
 void Admin::viewAll() {
     cout << "\nStudents:\n";
     for (auto &s : sys->students)
-        s.display();
+        displayPerson(s);
 
     cout << "\nFaculty:\n";
     for (auto &f : sys->faculties)
-        f.display();
+        displayPerson(f);
 
     cout << "\nCourses:\n";
     for (auto &c : sys->courses)
         cout << c.getCode() << " - " << c.getTitle()
-             << " (" << c.getCredits() << " credits)\n";
+             << " (" << c.getCredits() << " credits, capacity " << c.getCapacity() << ")\n";
 }
