@@ -11,7 +11,7 @@ private:
 
 public:
     Admin(string id, string name, string pass, System *s);
-
+    void display() override;
     bool login(string pass);
 
     void addStudent(string id, string name);
@@ -27,3 +27,4 @@ public:
 };
 
 #endif
+
