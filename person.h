@@ -9,22 +9,19 @@ protected:
     string id;
     string name;
     string password;
-    static int count;
+    static int count;  
+
 public:
-    Person(string i = "", string n = "", string pass = "")
-          : id(i),name(n), passsword(p) {}
-    Person(string i = "", string n = "", string pass = "")
+    Person(string i = "", string n = "", string pass = "");
+    virtual ~Person(); 
+
     string getId();
     string getName();
-    bool checkPassword(string p)
-   {
-       return p==pasword;
-   }
     bool checkPassword(string p);
 
-    virtual void display()=0;
-    static int getCount() { return count;}
+    virtual void display() = 0;
+
+    static int getCount() { return count; }
 };
 
 #endif
-
