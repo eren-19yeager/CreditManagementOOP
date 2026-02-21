@@ -1,10 +1,9 @@
 #include "Person.h"
 
-Person::Person(string i, string n) {
+int Person::count = 0;
 Person::Person(string i, string n, string pass) {
     id = i;
     name = n;
-    password = p;
     password = pass;
     count++
 }
@@ -18,5 +17,6 @@ string Person::getName() { return name; }
 bool Person::checkPassword(string p) {
     return p == password;
 }
+
 
 
