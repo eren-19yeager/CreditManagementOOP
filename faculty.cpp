@@ -11,8 +11,6 @@ void Faculty::display() {
     cout << "Faculty : " << id << " " << name << endl;
 }
 
-// Enter a grade for a student in a course by calling System's assignGrade.
-// System converts marks to letter (A/B/C/F) and stores in grades list.
 void Faculty::enterGrades(System &sys, string studentID, string courseCode, float marks) {
     if (marks < 0 || marks > 100) {
         cout << "Invalid marks. Use 0-100.\n";
@@ -23,8 +21,6 @@ void Faculty::enterGrades(System &sys, string studentID, string courseCode, floa
          << " in " << courseCode << ".\n";
 }
 
-// Show how many courses this faculty teaches and list them.
-// Works by finding all courses in System where getFacultyID() matches this faculty's id.
 void Faculty::viewTeachingLoad(System &sys) {
     int count = 0;
     cout << "\n--- Teaching load for " << name << " (" << id << ") ---\n";
@@ -62,14 +58,11 @@ void Faculty::viewClassList(System &sys, string courseCode) {
         cout << "  No students enrolled.\n";
 }
 
-// Placeholder for managing materials (e.g. upload handouts). Shows which course is meant.
 void Faculty::manageCourseMaterials(System &sys, string courseCode) {
     cout << "\n--- Course materials for " << courseCode << " ---\n";
     cout << "  (Upload / add materials feature can be added here.)\n";
 }
 
-// Show when the course meets by listing schedule entries for that courseCode.
-// Uses System's schedules: each entry has studentID, courseCode, dayTime.
 void Faculty::viewClassSchedule(System &sys, string courseCode) {
     cout << "\n--- Schedule for " << courseCode << " ---\n";
     bool any = false;
@@ -82,3 +75,4 @@ void Faculty::viewClassSchedule(System &sys, string courseCode) {
     if (!any)
         cout << "  No schedule entries for this course.\n";
 }
+
