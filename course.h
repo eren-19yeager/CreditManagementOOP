@@ -18,6 +18,7 @@ private:
 
     string instructorID;
     vector<string> prerequisites;
+    vector<CourseComponent*> components;
 
 public:
     // Constructor
