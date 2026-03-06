@@ -99,3 +99,18 @@ void Course::displayCourseInfo() const {
     cout << "Instructor: " << instructorID << endl;
     cout << "Seats: " << enrolledCount << "/" << capacity << endl;
 }
+void Course::addComponent(CourseComponent* comp)
+{
+    components.push_back(comp);
+}
+
+void Course::displayComponents() const
+{
+    cout << "\nCourse Components:\n";
+
+    for(int i = 0; i < components.size(); i++)
+    {
+        components[i]->displayStatus();
+        cout << endl;
+    }
+}
