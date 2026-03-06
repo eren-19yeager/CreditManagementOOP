@@ -53,7 +53,7 @@ public:
     void displayCourseInfo() const;
     void addComponent(CourseComponent* comp);
     void displayComponents() const;
-
+    friend void compareEnrollment(const Course& c1, const Course& c2);
 };
 
 #endif
