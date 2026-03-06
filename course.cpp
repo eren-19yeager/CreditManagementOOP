@@ -114,3 +114,14 @@ void Course::displayComponents() const
         cout << endl;
     }
 }
+void compareEnrollment(const Course& c1, const Course& c2)
+{
+    if (c1.enrolledCount > c2.enrolledCount)
+        cout << c1.courseTitle << " has more students enrolled.\n";
+
+    else if (c2.enrolledCount > c1.enrolledCount)
+        cout << c2.courseTitle << " has more students enrolled.\n";
+
+    else
+        cout << "Both courses have equal enrollment.\n";
+}
