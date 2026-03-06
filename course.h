@@ -54,7 +54,6 @@ public:
     void addComponent(CourseComponent* comp);
     void displayComponents() const;
 
-    void displayCourseInfo() const;
 };
 
 #endif
