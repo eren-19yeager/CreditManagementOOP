@@ -17,6 +17,11 @@ string Person::getName() { return name; }
 bool Person::checkPassword(string p) {
     return p == password;
 }
+string Person::toCSV() const
+{
+    return getName() + "," + getId();
+}
+
 
 
 
