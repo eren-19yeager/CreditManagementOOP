@@ -26,6 +26,7 @@ public:
     void viewEnrolledCourses();
     void dropCourse(string courseID, int courseCredits);
     void calculateGPA(System &sys);
+    string toCSV() const;
 
     bool operator==(const Student &other) const { return id == other.id; }
 };
