@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include "Timeslot.h"
 
 using namespace std;
 
@@ -21,6 +22,7 @@ private:
     string instructorID;
     vector<string> prerequisites;
     vector<CourseComponent*> components;
+    TimeSlot scheduleSlot;
 
 public:
     // Constructor
@@ -38,10 +40,12 @@ public:
     int getCapacity() const;
     int getEnrolledCount() const;
     string getInstructorID() const;
+    TimeSlot getTimeSlot() const;        
 
     // Setters
     void setInstructor(string instructorID);
     void addPrerequisite(string prereqID);
+    void setTimeSlot(const TimeSlot& slot);
 
     // Enrollment Management
     bool isSeatAvailable() const;
