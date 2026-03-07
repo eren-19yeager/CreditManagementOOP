@@ -37,6 +37,16 @@ int Course::getEnrolledCount() const {
 string Course::getInstructorID() const {
     return instructorID;
 }
+//Set Timeslot
+void Course::setTimeSlot(const TimeSlot& slot)
+{
+    scheduleSlot = slot;
+}
+
+TimeSlot Course::getTimeSlot() const
+{
+    return scheduleSlot;
+}
 
 // Set Instructor
 void Course::setInstructor(string id) {
