@@ -1,28 +1,36 @@
 #include "ResultManager.h"
 #include "Grades.h"
 #include "ResultContribution.h"
+#include "Course.h"
 #include <iostream>
 
 using namespace std;
 
-
-void ResultManager::generateResults(Student* student) {
+void ResultManager::generateResults(Student* student)
+{
     vector<Enrollment*> enrolls = student->getEnrollments();
 
-    for(auto e : enrolls) {
-        if(e->getStatus() == "Completed") {
-            e->getCourse()->calculateCourseResult(); 
+    for(auto e : enrolls)
+    {
+        if(e->getStatus() == "Completed")
+        {
+            Course* c = e->getCourse();
+
+            if(c->getComponent() != nullptr)
+                c->getComponent()->evaluate(c->getComponent()->getResult());
         }
     }
 }
 
-
-float ResultManager::calculateGPA(Student* student) {
+float ResultManager::calculateGPA(Student* student)
+{
     vector<Enrollment*> enrolls = student->getEnrollments();
     ResultContribution total;
 
-    for(auto e : enrolls) {
-        if(e->getStatus() != "Completed") continue;
+    for(auto e : enrolls)
+    {
+        if(e->getStatus() != "Completed")
+            continue;
 
         Course* c = e->getCourse();
         float percentage = c->calculateCourseResult();
@@ -34,34 +42,38 @@ float ResultManager::calculateGPA(Student* student) {
             c->getCredits()
         );
 
-        total = total + current; // overloaded +
+        total = total + current;
     }
 
-    if(total.credits == 0) return 0;
+    if(total.credits == 0)
+        return 0;
+
     return total.creditGpa / total.credits;
 }
 
+void ResultManager::generateTranscript(Student* student)
+{
+    cout<<"\n===== TRANSCRIPT =====\n";
 
-// transcript 
-void ResultManager::generateTranscript(Student* student) {
-    cout << "\n===== TRANSCRIPT =====\n";
     const vector<Enrollment*>& enrolls = student->getEnrollments();
 
-    for(auto e : enrolls) {
-        if(e->getStatus() != "Completed") continue;
+    for(auto e : enrolls)
+    {
+        if(e->getStatus() != "Completed")
+            continue;
 
         Course* c = e->getCourse();
         float result = c->calculateCourseResult();
 
         Grades g(result);
 
-        cout << c->getCourseID()
-             << " | Credits: " << c->getCredits()
-             << " | Grade: " << g.getLetter()
-             << " | GPA: " << g.getGPA()
-             << endl;
+        cout<<c->getCourseID()
+            <<" | Credits: "<<c->getCredits()
+            <<" | Grade: "<<g.getLetter()
+            <<" | GPA: "<<g.getGPA()
+            <<endl;
     }
 
-    cout << "FINAL CGPA: " << calculateGPA(student) << endl;
-    cout << "=====================\n";
+    cout<<"FINAL CGPA: "<<calculateGPA(student)<<endl;
+    cout<<"=====================\n";
 }
