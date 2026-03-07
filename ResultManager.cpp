@@ -11,7 +11,7 @@ void ResultManager::generateResults(Student* student) {
 
     for(auto e : enrolls) {
         if(e->getStatus() == "Completed") {
-            e->getCourse()->getComponent()->calculateResult(); // polymorphic
+            e->getCourse()->calculateCourseResult(); 
         }
     }
 }
@@ -25,7 +25,7 @@ float ResultManager::calculateGPA(Student* student) {
         if(e->getStatus() != "Completed") continue;
 
         Course* c = e->getCourse();
-        float percentage = c->getComponent()->getResult();
+        float percentage = c->calculateCourseResult();
 
         Grades g(percentage);
 
@@ -41,6 +41,7 @@ float ResultManager::calculateGPA(Student* student) {
     return total.creditGpa / total.credits;
 }
 
+
 // transcript 
 void ResultManager::generateTranscript(Student* student) {
     cout << "\n===== TRANSCRIPT =====\n";
@@ -50,7 +51,8 @@ void ResultManager::generateTranscript(Student* student) {
         if(e->getStatus() != "Completed") continue;
 
         Course* c = e->getCourse();
-        float result = c->getComponent()->getResult();
+        float result = c->calculateCourseResult();
+
         Grades g(result);
 
         cout << c->getCourseID()
