@@ -1,157 +1,126 @@
 #include "Course.h"
-#include <iostream>
+#include "CourseComponent.h"
+#include <bits/stdc++.h>
 
 using namespace std;
-Course::Course(string id, string title, string type, int credit, int cap) {
+
+Course::Course(string id, string title, string type, int credit, int cap)
+{
     courseID = id;
     courseTitle = title;
     courseType = type;
     credits = credit;
     capacity = cap;
     enrolledCount = 0;
-}
-string Course::getCourseID() const {
-    return courseID;
+    component = nullptr;
 }
 
-string Course::getCourseTitle() const {
-    return courseTitle;
-}
+string Course::getCourseID() const { return courseID; }
+string Course::getCourseTitle() const { return courseTitle; }
+string Course::getCourseType() const { return courseType; }
+int Course::getCredits() const { return credits; }
+int Course::getCapacity() const { return capacity; }
+int Course::getEnrolledCount() const { return enrolledCount; }
+string Course::getInstructorID() const { return instructorID; }
 
-string Course::getCourseType() const {
-    return courseType;
-}
-
-int Course::getCredits() const {
-    return credits;
-}
-
-int Course::getCapacity() const {
-    return capacity;
-}
-
-int Course::getEnrolledCount() const {
-    return enrolledCount;
-}
-
-string Course::getInstructorID() const {
-    return instructorID;
-}
-//Set Timeslot
-void Course::setTimeSlot(const TimeSlot& slot)
+void Course::setInstructor(string id)
 {
-    scheduleSlot = slot;
-}
-
-TimeSlot Course::getTimeSlot() const
-{
-    return scheduleSlot;
-}
-
-// Set Instructor
-void Course::setInstructor(string id) {
     instructorID = id;
 }
 
-// Add prerequisite
-void Course::addPrerequisite(string prereqID) {
+void Course::addPrerequisite(string prereqID)
+{
     prerequisites.push_back(prereqID);
 }
 
-// Check seat availability
-bool Course::isSeatAvailable() const {
+bool Course::isSeatAvailable() const
+{
     return enrolledCount < capacity;
 }
 
-// Enroll student
-bool Course::enrollStudent() {
-    if (isSeatAvailable()) {
+bool Course::enrollStudent()
+{
+    if(isSeatAvailable())
+    {
         enrolledCount++;
         return true;
     }
     return false;
 }
 
-// Drop student
-bool Course::dropStudent() {
-    if (enrolledCount > 0) {
+bool Course::dropStudent()
+{
+    if(enrolledCount > 0)
+    {
         enrolledCount--;
         return true;
     }
     return false;
 }
 
-// Check prerequisite completion
-bool Course::checkPrerequisite(const vector<string>& completedCourses) const {
-    for (int i = 0; i < prerequisites.size(); i++) {
-        bool found = false;
+bool Course::checkPrerequisite(const vector<string>& completedCourses) const
+{
+    for(int i=0;i<prerequisites.size();i++)
+    {
+        bool found=false;
 
-        for (int j = 0; j < completedCourses.size(); j++) {
-            if (prerequisites[i] == completedCourses[j]) {
-                found = true;
+        for(int j=0;j<completedCourses.size();j++)
+        {
+            if(prerequisites[i]==completedCourses[j])
+            {
+                found=true;
                 break;
             }
         }
 
-        if (!found)
+        if(!found)
             return false;
     }
 
     return true;
 }
 
-// Display course info
-void Course::displayCourseInfo() const {
-    cout << "Course ID: " << courseID << endl;
-    cout << "Title: " << courseTitle << endl;
-    cout << "Type: " << courseType << endl;
-    cout << "Credits: " << credits << endl;
-    cout << "Instructor: " << instructorID << endl;
-    cout << "Seats: " << enrolledCount << "/" << capacity << endl;
-}
-void Course::addComponent(CourseComponent* comp)
+void Course::displayCourseInfo() const
 {
-    components.push_back(comp);
+    cout<<"Course ID: "<<courseID<<endl;
+    cout<<"Title: "<<courseTitle<<endl;
+    cout<<"Type: "<<courseType<<endl;
+    cout<<"Credits: "<<credits<<endl;
+    cout<<"Instructor: "<<instructorID<<endl;
+    cout<<"Seats: "<<enrolledCount<<"/"<<capacity<<endl;
 }
 
-void Course::displayComponents() const
+void Course::setComponent(CourseComponent* comp)
 {
-    cout << "\nCourse Components:\n";
-
-    for(int i = 0; i < components.size(); i++)
-    {
-        components[i]->displayStatus();
-        cout << endl;
-    }
+    component = comp;
 }
-vector<CourseComponent*>& Course::getComponents()
+
+CourseComponent* Course::getComponent()
 {
-    return components;
+    return component;
 }
 
 float Course::calculateCourseResult()
 {
-    if(components.size() == 0)
+    if(component == nullptr)
         return 0;
 
-    float total = 0;
-
-    for(int i = 0; i < components.size(); i++)
-    {
-        components[i]->calculateResult();
-        total += components[i]->getResult();
-    }
-
-    return total / components.size();
+    component->evaluate(component->getResult());
+    return component->getResult();
 }
-void compareEnrollment(const Course& c1, const Course& c2)
+
+void Course::displayComponent() const
 {
-    if (c1.enrolledCount > c2.enrolledCount)
-        cout << c1.courseTitle << " has more students enrolled.\n";
+    if(component != nullptr)
+        component->displayStatus();
+}
 
-    else if (c2.enrolledCount > c1.enrolledCount)
-        cout << c2.courseTitle << " has more students enrolled.\n";
-
+void compareEnrollment(const Course& c1,const Course& c2)
+{
+    if(c1.enrolledCount>c2.enrolledCount)
+        cout<<c1.courseTitle<<" has more students enrolled.\n";
+    else if(c2.enrolledCount>c1.enrolledCount)
+        cout<<c2.courseTitle<<" has more students enrolled.\n";
     else
-        cout << "Both courses have equal enrollment.\n";
+        cout<<"Both courses have equal enrollment.\n";
 }
