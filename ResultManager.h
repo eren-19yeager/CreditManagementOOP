@@ -1,15 +1,18 @@
 #ifndef RESULTMANAGER_H
 #define RESULTMANAGER_H
 
-#include "Student.h"
-#include "Enrollment.h"
+#include "student.h"
+#include "enrollment.h"
+#include "Course.h"
 #include <vector>
+
+using namespace std;
 
 class ResultManager {
 public:
-    void generateResults(Student* student);   // triggers calculateResult()
-    float calculateGPA(Student* student);     // computes CGPA
-    void generateTranscript(Student* student); // prints transcript
+    void generateResults(Student* student);      // triggers evaluation
+    float calculateGPA(Student* student);        // computes CGPA
+    void generateTranscript(Student* student);   // prints transcript
 };
 
 #endif
