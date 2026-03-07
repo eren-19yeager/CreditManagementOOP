@@ -104,3 +104,7 @@ void Student::display() {
 
     cout << endl;
 }
+string Student::toCSV() const {
+    
+    return getId() + "," + getName();
+}
