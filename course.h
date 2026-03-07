@@ -6,6 +6,8 @@
 
 using namespace std;
 
+class CourseComponent;   // forward declaration
+
 class Course {
 private:
     string courseID;
@@ -53,6 +55,11 @@ public:
     void displayCourseInfo() const;
     void addComponent(CourseComponent* comp);
     void displayComponents() const;
+
+    // NEW FUNCTIONS (added)
+    vector<CourseComponent*>& getComponents();
+    float calculateCourseResult();
+
     friend void compareEnrollment(const Course& c1, const Course& c2);
 };
 
