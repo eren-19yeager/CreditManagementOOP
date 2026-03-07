@@ -114,6 +114,26 @@ void Course::displayComponents() const
         cout << endl;
     }
 }
+vector<CourseComponent*>& Course::getComponents()
+{
+    return components;
+}
+
+float Course::calculateCourseResult()
+{
+    if(components.size() == 0)
+        return 0;
+
+    float total = 0;
+
+    for(int i = 0; i < components.size(); i++)
+    {
+        components[i]->calculateResult();
+        total += components[i]->getResult();
+    }
+
+    return total / components.size();
+}
 void compareEnrollment(const Course& c1, const Course& c2)
 {
     if (c1.enrolledCount > c2.enrolledCount)
