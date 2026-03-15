@@ -1,0 +1,90 @@
+#include "course.h"
+
+Course::Course()
+    : code(""), title(""), credits(0), facultyID(""),
+      capacity(0), enrolledCount(0), courseType(CourseType::Theory) {}
+
+Course::Course(string c, string t, int cr)
+    : code(c), title(t), credits(cr), facultyID(""),
+      capacity(30), enrolledCount(0), courseType(CourseType::Theory) {}
+
+string Course::getCode()     const { return code; }
+string Course::getTitle()    const { return title; }
+int    Course::getCredits()  const { return credits; }
+int    Course::getCapacity() const { return capacity; }
+
+void   Course::setCapacity(int cap) { capacity = cap; }
+void   Course::assignFaculty(const string &fid) { facultyID = fid; }
+string Course::getFacultyID() const { return facultyID; }
+
+const TimeSlot& Course::getTimeSlot() const { return timeSlot; }
+void            Course::setTimeSlot(const TimeSlot &ts) { timeSlot = ts; }
+
+CourseType Course::getCourseType() const { return courseType; }
+void       Course::setCourseType(CourseType type) { courseType = type; }
+
+string Course::getCourseTypeString() const {
+    switch (courseType) {
+        case CourseType::Theory: return "Theory";
+        case CourseType::Lab:    return "Lab";
+        case CourseType::Online: return "Online";
+        default:                 return "Theory";
+    }
+}
+
+// ---------- Seat management ----------
+
+bool Course::isSeatAvailable() const {
+    if (capacity <= 0) return true;       // 0 = unlimited
+    return enrolledCount < capacity;
+}
+
+void Course::enrollStudent() {
+    enrolledCount++;
+}
+
+void Course::dropStudent() {
+    if (enrolledCount > 0) enrolledCount--;
+}
+
+// ---------- Similar / equivalent courses ----------
+
+void Course::addEquivalentCourse(const string &courseCode) {
+    if (courseCode != code)
+        equivalentCourseCodes.push_back(courseCode);
+}
+
+bool Course::isSimilarTo(const string &courseCode) const {
+    if (courseCode == code) return true;
+    for (const auto &eq : equivalentCourseCodes)
+        if (eq == courseCode) return true;
+    return false;
+}
+
+std::vector<string> Course::getSimilarCourseCodes() const {
+    std::vector<string> result;
+    result.push_back(code);
+    for (const auto &eq : equivalentCourseCodes)
+        result.push_back(eq);
+    return result;
+}
+
+// ---------- Prerequisites ----------
+
+void Course::addPrerequisite(const string &courseCode) {
+    prerequisiteCodes.push_back(courseCode);
+}
+
+bool Course::checkPrerequisite(const std::vector<string> &completedCourses) const {
+    for (const auto &pre : prerequisiteCodes) {
+        bool found = false;
+        for (const auto &done : completedCourses)
+            if (done == pre) { found = true; break; }
+        if (!found) return false;
+    }
+    return true;
+}
+
+const std::vector<string>& Course::getPrerequisiteCodes() const {
+    return prerequisiteCodes;
+}

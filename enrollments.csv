@@ -1,0 +1,4 @@
+enrollmentID,studentID,courseCode,semester,status
+1_CSE4305,,CSE4305,,Active
+5_CSE4303,5,CSE4303,,Active
+4_Math4341,4,Math4341,,Active
