@@ -1,3 +1,6 @@
+#include <iomanip>
+#include <sstream>
+#include <fstream>
 #include "student.h"
 #include "system.h"
 #include <bits/stdc++.h>
@@ -140,4 +143,34 @@ void Student::display() const {
     for (const auto &c : courses) cout << c << " ";
     cout << "\nDepartment: " << (department.empty() ? "Not set" : department) << "\n";
     cout << "Section:    " << (section.empty()    ? "Not set" : section)    << "\n\n";
+}
+
+void Student::serialize(ofstream &out) const
+{
+    out << left
+        << setw(10) << id << " | "
+        << setw(20) << name << " | "
+        << setw(10) << department << " | "
+        << setw(10) << section
+        << endl;
+}
+
+Student Student::deserialize(const string &line)
+{
+    stringstream ss(line);
+
+    string id, name, dept, sec;
+
+    ss >> id;
+    ss.ignore(3);
+
+    getline(ss, name, '|');
+    name = name.substr(0, name.size() - 1);
+
+    ss >> dept;
+    ss.ignore(3);
+
+    ss >> sec;
+
+    return Student(id, name, "", sec, dept, 18, 9);
 }
