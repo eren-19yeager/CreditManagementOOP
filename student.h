@@ -1,10 +1,13 @@
 #ifndef STUDENT_H
 #define STUDENT_H
 
+#include <fstream>
+#include <string>
 #include "person.h"
 #include "CreditAccount.h"
 #include <bits/stdc++.h>
 #include "grades.h"
+
 
 class System;
 
@@ -54,6 +57,10 @@ public:
     void setSection   (const string &sec);
 
     bool operator==(const Student &other) const { return id == other.id; }
+
+    //File
+    void serialize(ofstream &out) const;
+    static Student deserialize(const string &line);
 };
 
 #endif
