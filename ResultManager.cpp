@@ -1,5 +1,5 @@
 #include "ResultManager.h"
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
 
 void ResultManager::addGrade(const string& studentID, const string& courseCode, float marks) {
@@ -32,14 +32,18 @@ float ResultManager::calculateGPA(const vector<Grades>& grades, string studentID
 
 void ResultManager::generateTranscript(const vector<Grades>& grades, string studentID) {
     cout << "\n===== TRANSCRIPT =====\n";
-    bool any = false;
-    for (const auto& g : grades) {
-        if (g.studentID == studentID) {
-            cout << g.courseCode << " : " << g.marks
-                 << " (" << g.letter << ")\n";
-            any = true;
-        }
-    }
-    if (!any) cout << "No grades recorded.\n";
+
+    // Collect and sort using Grades::operator< (highest marks first)
+    vector<Grades> studentGrades;
+    for (const auto& g : grades)
+        if (g.studentID == studentID) studentGrades.push_back(g);
+
+    sort(studentGrades.begin(), studentGrades.end()); // uses Grades::operator<
+
+    if (studentGrades.empty()) cout << "No grades recorded.\n";
+    else
+        for (const auto& g : studentGrades)
+            cout << "  " << g << "\n";  // uses Grades::operator<<
+
     cout << "=====================\n";
 }
