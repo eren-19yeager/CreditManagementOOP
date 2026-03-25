@@ -1,3 +1,4 @@
+#include <iostream>
 #include "course.h"
 
 Course::Course()
@@ -87,4 +88,27 @@ bool Course::checkPrerequisite(const std::vector<string> &completedCourses) cons
 
 const std::vector<string>& Course::getPrerequisiteCodes() const {
     return prerequisiteCodes;
+}
+
+// ---------- Friend functions ----------
+
+// Directly accesses private members: code, title, credits, facultyID,
+// capacity, enrolledCount, courseType, timeSlot
+void printCourseDetails(const Course &c) {
+    std::cout << "Code: "     << c.code
+              << " | Title: " << c.title
+              << " | Credits: "<< c.credits
+              << " | Faculty: "<< (c.facultyID.empty() ? "Unassigned" : c.facultyID)
+              << " | Seats: "  << c.enrolledCount << "/" << c.capacity
+              << " | Type: "   << c.getCourseTypeString();
+    if (!c.timeSlot.getDay().empty())
+        std::cout << " | " << c.timeSlot.getDay()
+                  << " " << c.timeSlot.getStartTimeStr()
+                  << "-" << c.timeSlot.getEndTimeStr();
+    std::cout << "\n";
+}
+
+// Directly accesses private member facultyID to compare two courses
+bool sameFaculty(const Course &a, const Course &b) {
+    return !a.facultyID.empty() && a.facultyID == b.facultyID;
 }
