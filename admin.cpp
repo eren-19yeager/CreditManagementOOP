@@ -200,22 +200,22 @@ static void displayPerson(Person &p) { p.display(); }
 
 void Admin::viewAll() {
     cout << "\nStudents:\n";
-    for (auto &s : sys->students) displayPerson(s);
+    for (auto &s : sys->students)
+        cout << "  " << s << "\n";  // uses Student::operator<<
 
     cout << "\nFaculty:\n";
     for (auto &f : sys->faculties) displayPerson(f);
 
     cout << "\nCourses:\n";
+    // operator<< prints: code - title (credits) | Faculty: X | enrolled/capacity seats
     for (auto &c : sys->courses) {
-        cout << c.getCode() << " - " << c.getTitle()
-             << " (" << c.getCredits() << " credits, capacity " << c.getCapacity() << ")";
+        cout << "  " << c;   // uses Course::operator<<
         const TimeSlot& ts = c.getTimeSlot();
-        if (!ts.getDay().empty() && (ts.getEndMinutes() > 0 || ts.getStartMinutes() > 0)) {
+        if (!ts.getDay().empty() && ts.getEndMinutes() > ts.getStartMinutes())
             cout << " | " << ts.getDay() << " "
                  << ts.getStartTimeStr() << "-" << ts.getEndTimeStr();
-        } else {
+        else
             cout << " | Schedule: Not set";
-        }
         cout << "\n";
     }
 }
