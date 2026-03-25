@@ -1,60 +1,81 @@
 #ifndef SYSTEM_H
 #define SYSTEM_H
 
-#include <vector>
-#include <string>
-#include "Student.h"
-#include "Faculty.h"
+#include <bits/stdc++.h>
+#include "student.h"
+#include "faculty.h"
 #include "CreditAccount.h"
-#include "grade.h"
-#include "schedule.h"
+#include "grades.h"
 #include "progress.h"
 #include "course.h"
-
+#include "ResultManager.h"
+#include "enrollment.h"
 using namespace std;
 
-// simple enrollment record
-struct Enrollment {
+class CourseComponent;
+
+struct ScheduleEntry {
     string studentID;
     string courseCode;
+    string dayTime;
 };
 
 class System {
 public:
-    int maxCreditsAllowed = 18;  // used when creating students' credit accounts
+    int maxCreditsAllowed = 18;
 
-    // people
-    vector<Student> students;
-    vector<Faculty> faculties;
-
-    // courses
-    vector<Course> courses;
-
-    // enrollment
-    vector<Enrollment> enrollments;
-
-    // grades
-    vector<Grade> grades;
-
-    // schedule
-    vector<Schedule> schedules;
-
-    // progress
+    vector<Student>        students;
+    vector<Faculty>        faculties;
+    vector<Course>         courses;
+    vector<Enrollment>     enrollments;
+    vector<Grades>         grades;
+    vector<ScheduleEntry>  scheduleEntries;
     vector<DegreeProgress> progress;
 
-    // ---------- FUNCTIONS ----------
-    void enroll(string studentID, string courseCode);
-    void assignGrade(string studentID, string courseCode, float marks);
-    void calculateGPA(string studentID);
+    ResultManager resultManager;
 
-    // student-level views using Grade / Schedule / DegreeProgress
-    void showGradesForStudent(const string &studentID);
-    void showScheduleForStudent(const string &studentID);
-    void showProgress(const string &studentID);
+    // lookup
+    Student* findStudent(const string &studentID);
+    Faculty* findFaculty(const string &facultyID);
+    Course*  findCourse (const string &code);
 
-    // file handling
-    void saveCourses();
-    void loadCourses();
+    // enrollment
+    bool enroll(const string &studentID, const string &courseCode,
+                const string &semester = "");
+    bool drop  (const string &studentID, const string &courseCode);
+
+    // grades
+    void assignGrade             (const string &studentID, const string &courseCode, float marks);
+    void assignGradeFromComponent(const string &studentID, const string &courseCode,
+                                  CourseComponent* comp);
+    void calculateGPA(const string &studentID);
+
+    // prerequisites
+    void addPrerequisiteToCourse  (const string &courseCode, const string &prereqCode);
+    void viewCoursePrerequisites  (const string &courseCode) const;
+    bool checkStudentPrerequisites(const string &studentID,  const string &courseCode);
+    void markCourseCompleted      (const string &studentID,  const string &courseCode);
+
+    // views
+    void showGradesForStudent   (const string &studentID);
+    void showScheduleForStudent (const string &studentID);
+    void showScheduleForFaculty (const string &facultyID);
+    void showProgress           (const string &studentID);
+
+    vector<Course*> getAvailableCoursesForStudent(const string &studentID);
+    void displayCourseDetails(const Course &c) const;
+
+    // CSV persistence
+    void saveStudents();      void loadStudents();
+    void saveFaculties();     void loadFaculties();
+    void saveCourses();       void loadCourses();
+    void saveEnrollments();   void loadEnrollments();
+    void saveGrades();        void loadGrades();
+    void saveProgress();      void loadProgress();
+    void savePrerequisites(); void loadPrerequisites();
+
+    void saveAll();
+    void loadAll();
 };
 
 #endif
