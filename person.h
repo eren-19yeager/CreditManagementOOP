@@ -1,7 +1,6 @@
 #ifndef PERSON_H
 #define PERSON_H
-
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
 
 class Person {
@@ -9,21 +8,21 @@ protected:
     string id;
     string name;
     string password;
-    static int count;  
+    static int count;
 
 public:
     Person(string i = "", string n = "", string pass = "");
-    virtual ~Person(); 
+    virtual ~Person();
 
-    string getId();
-    string getName();
-    bool checkPassword(string p);
+    string getId()       const;
+    string getName()     const;
+    string getPassword() const;
+    void   setPassword(const string& p);
+    bool   checkPassword(string p) const;
 
     virtual void display() = 0;
 
     static int getCount() { return count; }
-    string toCSV() const;
 };
 
 #endif
-
