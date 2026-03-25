@@ -9,7 +9,7 @@
 #include "progress.h"
 #include "course.h"
 #include "ResultManager.h"
-#include "enrollment.h"
+#include "Enrollment.h"
 using namespace std;
 
 class CourseComponent;
@@ -34,29 +34,43 @@ public:
 
     ResultManager resultManager;
 
-    // lookup
+    // ---------- Template lookup ----------
+    template <typename T>
+    T* findByID(vector<T> &vec, const string &id) {
+        for (auto &item : vec)
+            if (item.getId() == id) return &item;
+        return nullptr;
+    }
+
+    // ---------- Lookup ----------
     Student* findStudent(const string &studentID);
     Faculty* findFaculty(const string &facultyID);
     Course*  findCourse (const string &code);
 
-    // enrollment
+    // ---------- Enrollment ----------
     bool enroll(const string &studentID, const string &courseCode,
                 const string &semester = "");
     bool drop  (const string &studentID, const string &courseCode);
 
-    // grades
+    // ---------- Grades ----------
     void assignGrade             (const string &studentID, const string &courseCode, float marks);
     void assignGradeFromComponent(const string &studentID, const string &courseCode,
                                   CourseComponent* comp);
     void calculateGPA(const string &studentID);
 
-    // prerequisites
+    // ---------- Credits & overload ----------
+    void showCreditStatus        (const string &studentID);
+    bool checkAndEnableOverload  (const string &studentID);
+    void enableOverloadForStudent(const string &studentID);
+    void resetSemesterForStudent (const string &studentID);
+
+    // ---------- Prerequisites ----------
     void addPrerequisiteToCourse  (const string &courseCode, const string &prereqCode);
     void viewCoursePrerequisites  (const string &courseCode) const;
     bool checkStudentPrerequisites(const string &studentID,  const string &courseCode);
     void markCourseCompleted      (const string &studentID,  const string &courseCode);
 
-    // views
+    // ---------- Views ----------
     void showGradesForStudent   (const string &studentID);
     void showScheduleForStudent (const string &studentID);
     void showScheduleForFaculty (const string &facultyID);
@@ -65,7 +79,7 @@ public:
     vector<Course*> getAvailableCoursesForStudent(const string &studentID);
     void displayCourseDetails(const Course &c) const;
 
-    // CSV persistence
+    // ---------- CSV ----------
     void saveStudents();      void loadStudents();
     void saveFaculties();     void loadFaculties();
     void saveCourses();       void loadCourses();
