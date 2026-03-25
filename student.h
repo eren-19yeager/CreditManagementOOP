@@ -1,13 +1,11 @@
 #ifndef STUDENT_H
 #define STUDENT_H
 
-#include <fstream>
-#include <string>
 #include "person.h"
 #include "CreditAccount.h"
 #include <bits/stdc++.h>
+#include <iostream>
 #include "grades.h"
-
 
 class System;
 
@@ -55,12 +53,19 @@ public:
     string getSection()    const;
     void setDepartment(const string &dept);
     void setSection   (const string &sec);
-
-    bool operator==(const Student &other) const { return id == other.id; }
-
     //File
     void serialize(ofstream &out) const;
     static Student deserialize(const string &line);
+
+    bool operator==(const Student &other) const { return id == other.id; }
+
+    // Stream output: prints student summary
+    friend ostream& operator<<(ostream &os, const Student &s) {
+        os << "ID: " << s.id << " | Name: " << s.name
+           << " | Dept: " << (s.department.empty() ? "Not set" : s.department)
+           << " | Credits: " << s.creditAccount.getCurrentCredits();
+        return os;
+    }
 };
 
 #endif
