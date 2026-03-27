@@ -5,6 +5,7 @@
 #include "CourseComponent.h"
 #include "schedule.h"
 #include <bits/stdc++.h>
+#include <iomanip>
 using namespace std;
 
 // ---------- Lookup helpers ----------
@@ -673,4 +674,73 @@ void System::loadAll() {
     loadStudents(); loadFaculties(); loadCourses();
     loadEnrollments(); loadGrades(); loadProgress();
     loadPrerequisites();
+}
+
+void System::printStudentsTable() const
+{
+    cout << "\n--- Students ---\n";
+
+    cout << left
+         << setw(10) << "ID" << " | "
+         << setw(20) << "Name" << " | "
+         << setw(12) << "Department" << " | "
+         << setw(10) << "Section" << endl;
+
+    cout << "-------------------------------------------------------------\n";
+
+    for (const auto &s : students)
+    {
+        cout << left
+             << setw(10) << s.getId() << " | "
+             << setw(20) << s.getName() << " | "
+             << setw(12) << (s.getDepartment().empty() ? "N/A" : s.getDepartment()) << " | "
+             << setw(10) << (s.getSection().empty() ? "N/A" : s.getSection())
+             << endl;
+    }
+}
+void System::printGradesTable() const
+{
+    cout << "\n--- Grades ---\n";
+
+    cout << left
+         << setw(12) << "StudentID" << " | "
+         << setw(12) << "CourseCode" << " | "
+         << setw(8)  << "Marks" << " | "
+         << setw(6)  << "Grade" << endl;
+
+    cout << "------------------------------------------------\n";
+
+    for (const auto &g : grades)
+    {
+        cout << left
+             << setw(12) << g.studentID << " | "
+             << setw(12) << g.courseCode << " | "
+             << setw(8)  << fixed << setprecision(2) << g.marks << " | "
+             << setw(6)  << g.letter
+             << endl;
+    }
+}
+void System::printCoursesTable() const
+{
+    cout << "\n--- Courses ---\n";
+
+    cout << left
+         << setw(10) << "Code" << " | "
+         << setw(25) << "Title" << " | "
+         << setw(6)  << "Cr" << " | "
+         << setw(10) << "Type" << " | "
+         << setw(10) << "Faculty" << endl;
+
+    cout << "--------------------------------------------------------------------------\n";
+
+    for (const auto &c : courses)
+    {
+        cout << left
+             << setw(10) << c.getCode() << " | "
+             << setw(25) << c.getTitle() << " | "
+             << setw(6)  << c.getCredits() << " | "
+             << setw(10) << c.getCourseTypeString() << " | "
+             << setw(10) << (c.getFacultyID().empty() ? "N/A" : c.getFacultyID())
+             << endl;
+    }
 }
