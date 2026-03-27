@@ -27,10 +27,15 @@ Grades::Grades(string sid, string code, CourseComponent* comp)
 }
 
 void Grades::computeGrade() {
-    if      (marks >= 80) letter = "A";
-    else if (marks >= 70) letter = "B";
-    else if (marks >= 60) letter = "C";
-    else if (marks >= 50) letter = "D";
+    if      (marks >= 80) letter = "A+";
+    else if (marks >= 75) letter = "A";
+    else if (marks >= 70) letter = "A-";
+    else if (marks >= 65) letter = "B+";
+    else if (marks >= 60) letter = "B";
+    else if (marks >= 55) letter = "B-";
+    else if (marks >= 50) letter = "C+";
+    else if (marks >= 45) letter = "C";
+    else if (marks >= 40) letter = "D";
     else                  letter = "F";
 }
 
