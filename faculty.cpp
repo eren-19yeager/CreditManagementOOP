@@ -1,4 +1,5 @@
 #include "faculty.h"
+#include "GradeException.h"
 #include "system.h"
 #include "CourseComponent.h"
 #include "TheoryComponent.h"
@@ -15,19 +16,52 @@ void Faculty::display() {
     cout << "Faculty : " << id << " " << name << "\n";
 }
 
-// ---- Simple marks entry (original, still used) ----
+// ---- Simple marks entry — throws GradeException on invalid input ----
 void Faculty::enterGrades(System &sys, string studentID, string courseCode, float marks) {
-    if (marks < 0 || marks > 100) {
-        cout << "Invalid marks. Use 0-100.\n";
-        return;
-    }
+    Course* co = sys.findCourse(courseCode);
+    if (!co)
+        throw GradeException("Course not found: " + courseCode, studentID, courseCode);
+
+    if (co->getFacultyID() != id)
+        throw GradeException("Access denied: " + id + " is not assigned to " + courseCode,
+                              studentID, courseCode);
+
+    bool enrolled = false;
+    for (const auto &e : sys.enrollments)
+        if (e.getStudentID() == studentID && e.getCourseCode() == courseCode
+            && e.getStatus() == "Active") { enrolled = true; break; }
+    if (!enrolled)
+        throw GradeException("Student " + studentID + " is not enrolled in " + courseCode,
+                              studentID, courseCode);
+
+    if (marks < 0 || marks > 100)
+        throw GradeException("Invalid marks " + to_string((int)marks) +
+                              " — must be 0-100", studentID, courseCode);
+
     sys.assignGrade(studentID, courseCode, marks);
+    sys.markCourseCompleted(studentID, courseCode);
     cout << "Grade entered: " << marks << " for student " << studentID
          << " in " << courseCode << ".\n";
 }
 
 // ---- Component-based entry ----
 void Faculty::enterGradesDetailed(System &sys, string studentID, string courseCode) {
+    // Verify course ownership
+    Course* co = sys.findCourse(courseCode);
+    if (!co) { cout << "Course not found.\n"; return; }
+    if (co->getFacultyID() != id) {
+        cout << "Access denied: you are not assigned to " << courseCode << ".\n";
+        return;
+    }
+    // Verify student enrollment
+    bool enrolled = false;
+    for (const auto &e : sys.enrollments)
+        if (e.getStudentID() == studentID && e.getCourseCode() == courseCode
+            && e.getStatus() == "Active") { enrolled = true; break; }
+    if (!enrolled) {
+        cout << "Student " << studentID << " is not enrolled in " << courseCode << ".\n";
+        return;
+    }
     cout << "\n--- Detailed Grade Entry: " << studentID << " / " << courseCode << " ---\n";
     cout << "Select component type:\n";
     cout << "1. Theory  (quizzes + assignment + mid + final)\n";
@@ -48,14 +82,14 @@ void Faculty::enterGradesDetailed(System &sys, string studentID, string courseCo
         // Theory
         TheoryComponent* tc = new TheoryComponent(compID);
         float q[4];
-        cout << "Enter 4 quiz marks (each out of 25, total contributes 10%):\n";
+        cout << "Enter 4 quiz marks (each out of 10, total contributes 10%):\n";
         for (int i = 0; i < 4; i++) {
             cout << "  Quiz " << i+1 << ": "; cin >> q[i];
         }
         float assign, mid, finalM;
-        cout << "Assignment (out of 10): "; cin >> assign;
-        cout << "Mid exam   (out of 30): "; cin >> mid;
-        cout << "Final exam (out of 50): "; cin >> finalM;
+        cout << "Assignment (out of 20): "; cin >> assign;
+        cout << "Mid exam   (out of 120): "; cin >> mid;
+        cout << "Final exam (out of 120): "; cin >> finalM;
         tc->setTheoryMarks(q, assign, mid, finalM);
         tc->evaluate();
         comp = tc;
@@ -104,6 +138,7 @@ void Faculty::enterGradesDetailed(System &sys, string studentID, string courseCo
 
     // Store the grade using the component result
     sys.assignGradeFromComponent(studentID, courseCode, comp);
+    sys.markCourseCompleted(studentID, courseCode);
     cout << "\nDetailed grade recorded. Final result: " << comp->getResult() << "%\n";
     comp->displayStatus();
 }
