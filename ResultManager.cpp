@@ -1,79 +1,49 @@
 #include "ResultManager.h"
-#include "Grades.h"
-#include "ResultContribution.h"
-#include "Course.h"
-#include <iostream>
-
+#include <bits/stdc++.h>
 using namespace std;
 
-void ResultManager::generateResults(Student* student)
-{
-    vector<Enrollment*> enrolls = student->getEnrollments();
-
-    for(auto e : enrolls)
-    {
-        if(e->getStatus() == "Completed")
-        {
-            Course* c = e->getCourse();
-
-            if(c->getComponent() != nullptr)
-                c->getComponent()->evaluate(c->getComponent()->getResult());
+void ResultManager::addGrade(const string& studentID, const string& courseCode, float marks) {
+    // Update if already exists, otherwise add
+    for (auto& g : internalGrades) {
+        if (g.studentID == studentID && g.courseCode == courseCode) {
+            g = Grades(studentID, courseCode, marks);
+            return;
         }
     }
+    internalGrades.push_back(Grades(studentID, courseCode, marks));
 }
 
-float ResultManager::calculateGPA(Student* student)
-{
-    vector<Enrollment*> enrolls = student->getEnrollments();
-    ResultContribution total;
-
-    for(auto e : enrolls)
-    {
-        if(e->getStatus() != "Completed")
-            continue;
-
-        Course* c = e->getCourse();
-        float percentage = c->calculateCourseResult();
-
-        Grades g(percentage);
-
-        ResultContribution current(
-            g.getGPA() * c->getCredits(),
-            c->getCredits()
-        );
-
-        total = total + current;
+float ResultManager::calculateGPA(const vector<Grades>& grades, string studentID) {
+    float total = 0;
+    int   count = 0;
+    for (const auto& g : grades) {
+        if (g.studentID == studentID) {
+            if      (g.letter == "A") total += 4;
+            else if (g.letter == "B") total += 3;
+            else if (g.letter == "C") total += 2;
+            else if (g.letter == "D") total += 1;
+            else                      total += 0;
+            count++;
+        }
     }
-
-    if(total.credits == 0)
-        return 0;
-
-    return total.creditGpa / total.credits;
+    if (count == 0) return 0;
+    return total / count;
 }
 
-void ResultManager::generateTranscript(Student* student)
-{
-    cout<<"\n===== TRANSCRIPT =====\n";
+void ResultManager::generateTranscript(const vector<Grades>& grades, string studentID) {
+    cout << "\n===== TRANSCRIPT =====\n";
 
-    const vector<Enrollment*>& enrolls = student->getEnrollments();
+    // Collect and sort using Grades::operator< (highest marks first)
+    vector<Grades> studentGrades;
+    for (const auto& g : grades)
+        if (g.studentID == studentID) studentGrades.push_back(g);
 
-    for(auto e : enrolls)
-    {
-        if(e->getStatus() != "Completed")
-            continue;
+    sort(studentGrades.begin(), studentGrades.end()); // uses Grades::operator<
 
-        Course* c = e->getCourse();
-        float result = c->calculateCourseResult();
+    if (studentGrades.empty()) cout << "No grades recorded.\n";
+    else
+        for (const auto& g : studentGrades)
+            cout << "  " << g << "\n";  // uses Grades::operator<<
 
-        Grades g(result);
-
-        cout<<c->getCourseID()
-            <<" | Credits: "<<c->getCredits()
-            <<" | Grade: "<<g.getLetter()
-            <<" | GPA: "<<g.getGPA()
-            <<endl;
-    }
-
-    cout<<"FINAL CGPA: "<<calculateGPA(student)<<endl;
-    cout<<"=====================\n";
+    cout << "=====================\n";
 }
