@@ -18,10 +18,15 @@ float ResultManager::calculateGPA(const vector<Grades>& grades, string studentID
     int   count = 0;
     for (const auto& g : grades) {
         if (g.studentID == studentID) {
-            if      (g.letter == "A") total += 4;
-            else if (g.letter == "B") total += 3;
-            else if (g.letter == "C") total += 2;
-            else if (g.letter == "D") total += 1;
+            if      (g.letter == "A+") total += 4.00;
+            else if (g.letter == "A") total += 3.75;
+            else if (g.letter == "A-") total += 3.50;
+            else if (g.letter == "B+") total +=3.25 ;
+            else if (g.letter == "B") total += 3.00;
+            else if (g.letter == "B-") total += 2.75;
+            else if (g.letter == "C+") total += 2.50;
+            else if (g.letter == "C") total += 2.25;
+            else if (g.letter == "D") total += 2.00;
             else                      total += 0;
             count++;
         }
