@@ -1,6 +1,9 @@
 #include "grades.h"
 #include "CourseComponent.h"
 #include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <fstream>
 using namespace std;
 
 Grades::Grades()
@@ -39,4 +42,34 @@ void Grades::display() const {
     } else {
         cout << "\n";
     }
+}
+// Serialization
+void Grades::serialize(ofstream &out) const
+{
+    out << left
+        << setw(12) << studentID << " | "
+        << setw(12) << courseCode << " | "
+        << setw(8)  << fixed << setprecision(2) << marks << " | "
+        << setw(3)  << letter
+        << endl;
+}
+Grades Grades::deserialize(const string &line)
+{
+    stringstream ss(line);
+
+    string sid, code, letter;
+    float marks;
+
+    ss >> sid;
+    ss.ignore(3);
+
+    ss >> code;
+    ss.ignore(3);
+
+    ss >> marks;
+    ss.ignore(3);
+
+    ss >> letter;
+
+    return Grades(sid, code, marks);
 }
