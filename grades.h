@@ -29,6 +29,10 @@ public:
         return studentID == other.studentID && courseCode == other.courseCode;
     }
 
+    //Serialization
+    void serialize(ofstream &out) const;
+    static Grades deserialize(const string &line);
+
     // Stream output: prints "courseCode : marks (letter)"
     friend ostream& operator<<(ostream &os, const Grades &g) {
         os << g.courseCode << " : " << g.marks << " (" << g.letter << ")";
