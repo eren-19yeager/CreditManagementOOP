@@ -47,21 +47,10 @@ void CourseComponent::resetMarks()
     cout << "Marks reset for " << componentID << "\n";
 }
 
-string CourseComponent::getComponentID() const { 
-    return componentID;
-}
-
-float CourseComponent::getResult() const { 
-return result;
-}
-
-float CourseComponent::getFullMarks() const { 
-return fullMarks; 
-}
-
-bool CourseComponent::isEvaluated() const { 
-return evaluated; 
-}
+string CourseComponent::getComponentID() const { return componentID; }
+float CourseComponent::getResult() const { return result; }
+float CourseComponent::getFullMarks() const { return fullMarks; }
+bool CourseComponent::isEvaluated() const { return evaluated; }
 
 CourseComponent::~CourseComponent()
 {
