@@ -82,14 +82,14 @@ void Faculty::enterGradesDetailed(System &sys, string studentID, string courseCo
         // Theory
         TheoryComponent* tc = new TheoryComponent(compID);
         float q[4];
-        cout << "Enter 4 quiz marks (each out of 25, total contributes 10%):\n";
+        cout << "Enter 4 quiz marks (each out of 10, total contributes 10%):\n";
         for (int i = 0; i < 4; i++) {
             cout << "  Quiz " << i+1 << ": "; cin >> q[i];
         }
         float assign, mid, finalM;
-        cout << "Assignment (out of 10): "; cin >> assign;
-        cout << "Mid exam   (out of 30): "; cin >> mid;
-        cout << "Final exam (out of 50): "; cin >> finalM;
+        cout << "Assignment (out of 20): "; cin >> assign;
+        cout << "Mid exam   (out of 120): "; cin >> mid;
+        cout << "Final exam (out of 120): "; cin >> finalM;
         tc->setTheoryMarks(q, assign, mid, finalM);
         tc->evaluate();
         comp = tc;
