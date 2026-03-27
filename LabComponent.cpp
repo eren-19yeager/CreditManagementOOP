@@ -1,5 +1,5 @@
-#include "LabComponent.h"
-
+#include "labComponent.h"
+#include <bits/stdc++.h>
 
 LabComponent::LabComponent()
 : CourseComponent("LAB"),
@@ -18,7 +18,6 @@ LabComponent::LabComponent(string id)
   finalLab(0)
 {
 }
-
 
 
 void LabComponent::enroll()
