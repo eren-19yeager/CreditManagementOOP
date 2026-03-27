@@ -12,7 +12,6 @@ public:
 
     void display() override;
 
-
     void enterGrades        (System &sys, string studentID, string courseCode, float marks);
 
     void enterGradesDetailed(System &sys, string studentID, string courseCode);
