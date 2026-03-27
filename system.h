@@ -70,6 +70,11 @@ public:
     bool checkStudentPrerequisites(const string &studentID,  const string &courseCode);
     void markCourseCompleted      (const string &studentID,  const string &courseCode);
 
+    //-----table views-----
+    void printStudentsTable() const;
+    void printCoursesTable() const;
+    void printGradesTable() const;
+    
     // ---------- Views ----------
     void showGradesForStudent   (const string &studentID);
     void showScheduleForStudent (const string &studentID);
