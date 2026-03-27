@@ -1,18 +1,18 @@
 #ifndef RESULTMANAGER_H
 #define RESULTMANAGER_H
 
-#include "student.h"
-#include "enrollment.h"
-#include "Course.h"
 #include <vector>
-
+#include "grades.h"
 using namespace std;
 
 class ResultManager {
+private:
+    vector<Grades> internalGrades; // synced copy for internal use
+
 public:
-    void generateResults(Student* student);      // triggers evaluation
-    float calculateGPA(Student* student);        // computes CGPA
-    void generateTranscript(Student* student);   // prints transcript
+    void  addGrade          (const string& studentID, const string& courseCode, float marks);
+    float calculateGPA      (const vector<Grades>& grades, string studentID);
+    void  generateTranscript(const vector<Grades>& grades, string studentID);
 };
 
 #endif
