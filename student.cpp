@@ -1,6 +1,3 @@
-#include <iomanip>
-#include <sstream>
-#include <fstream>
 #include "student.h"
 #include "system.h"
 #include <bits/stdc++.h>
@@ -144,7 +141,6 @@ void Student::display() const {
     cout << "\nDepartment: " << (department.empty() ? "Not set" : department) << "\n";
     cout << "Section:    " << (section.empty()    ? "Not set" : section)    << "\n\n";
 }
-
 void Student::serialize(ofstream &out) const
 {
     out << left

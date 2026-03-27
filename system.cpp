@@ -3,21 +3,17 @@
 #include "ResultManager.h"
 #include "grades.h"
 #include "CourseComponent.h"
+#include "schedule.h"
 #include <bits/stdc++.h>
 using namespace std;
 
 // ---------- Lookup helpers ----------
 
 Student* System::findStudent(const string &studentID) {
-    for (auto &s : students)
-        if (s.getId() == studentID) return &s;
-    return nullptr;
+    return findByID(students, studentID);   // template findByID<Student>
 }
-
 Faculty* System::findFaculty(const string &facultyID) {
-    for (auto &f : faculties)
-        if (f.getId() == facultyID) return &f;
-    return nullptr;
+    return findByID(faculties, facultyID);  // template findByID<Faculty>
 }
 
 Course* System::findCourse(const string &code) {
@@ -42,6 +38,20 @@ vector<Course*> System::getAvailableCoursesForStudent(const string &studentID) {
         }
         if (!canEnroll) continue;
         if (!c.isSeatAvailable()) continue;
+        // Filter out courses that would cause a time conflict
+        const TimeSlot& newSlot = c.getTimeSlot();
+        if (!newSlot.getDay().empty() && newSlot.getEndMinutes() > newSlot.getStartMinutes()) {
+            bool hasConflict = false;
+            for (const auto &e : enrollments) {
+                if (e.getStudentID() != studentID || e.getStatus() != "Active") continue;
+                Course* enrolled = findCourse(e.getCourseCode());
+                if (!enrolled) continue;
+                const TimeSlot& existing = enrolled->getTimeSlot();
+                if (existing.getDay().empty()) continue;
+                if (newSlot.conflictsWith(existing)) { hasConflict = true; break; }
+            }
+            if (hasConflict) continue;
+        }
         available.push_back(&c);
     }
     return available;
@@ -93,6 +103,29 @@ bool System::enroll(const string &studentID, const string &courseCode,
             cout << "Already enrolled in " << courseCode << ".\n";
             return false;
         }
+
+    // ---- Time conflict check ----
+    const TimeSlot& newSlot = co->getTimeSlot();
+    if (!newSlot.getDay().empty() && newSlot.getEndMinutes() > newSlot.getStartMinutes()) {
+        for (const auto &e : enrollments) {
+            if (e.getStudentID() != studentID || e.getStatus() != "Active") continue;
+            Course* enrolled = findCourse(e.getCourseCode());
+            if (!enrolled) continue;
+            const TimeSlot& existing = enrolled->getTimeSlot();
+            if (existing.getDay().empty()) continue;
+            if (newSlot.conflictsWith(existing)) {
+                cout << "Schedule conflict: " << courseCode
+                     << " (" << newSlot.getDay() << " "
+                     << newSlot.getStartTimeStr() << "-" << newSlot.getEndTimeStr()
+                     << ") clashes with already enrolled "
+                     << e.getCourseCode()
+                     << " (" << existing.getDay() << " "
+                     << existing.getStartTimeStr() << "-" << existing.getEndTimeStr()
+                     << ").\n";
+                return false;
+            }
+        }
+    }
 
     string eid = studentID + "_" + courseCode;
     Enrollment newEnrollment(eid, st, co, semester);
@@ -477,6 +510,59 @@ void System::loadProgress() {
     }
 }
 
+
+
+// ---------- Credit status & overload ----------
+
+void System::showCreditStatus(const string &studentID) {
+    Student* st = findStudent(studentID);
+    if (!st) { cout << "Student not found.\n"; return; }
+    CreditAccount& ca = st->getCreditAccount();
+    cout << "\n--- Credit Status ---\n";
+    cout << "Credits enrolled:  " << ca.getCurrentCredits() << "\n";
+    cout << "Maximum allowed:   " << ca.getMaxCredits()
+         << (ca.isOverloadAllowed() ? " (overload enabled)" : "") << "\n";
+    cout << "Minimum required:  " << ca.getMinCredits()     << "\n";
+    int remaining = ca.getMaxCredits() - ca.getCurrentCredits();
+    cout << "Credits remaining: " << remaining              << "\n";
+    if (ca.getCurrentCredits() < ca.getMinCredits())
+        cout << "  [Warning: below minimum credit load!]\n";
+    if (ca.isOverloadAllowed())
+        cout << "  [Overload active: you may exceed the normal credit cap]\n";
+    cout << "---------------------\n";
+}
+
+// Check GPA and enable overload if eligible (GPA >= 3.75)
+bool System::checkAndEnableOverload(const string &studentID) {
+    Student* st = findStudent(studentID);
+    if (!st) { cout << "Student not found.\n"; return false; }
+    float gpa = resultManager.calculateGPA(grades, studentID);
+    bool eligible = st->getCreditAccount().checkOverloadEligibility(gpa);
+    if (eligible)
+        cout << "Overload enabled for " << studentID
+             << " (GPA: " << gpa << " >= 3.75). "
+             << "Credit cap is now lifted for this semester.\n";
+    else
+        cout << "Not eligible for overload (GPA: " << gpa
+             << "). Requires GPA >= 3.75.\n";
+    return eligible;
+}
+
+// Admin manually enables overload for a student
+void System::enableOverloadForStudent(const string &studentID) {
+    Student* st = findStudent(studentID);
+    if (!st) { cout << "Student not found.\n"; return; }
+    st->getCreditAccount().enableOverload();
+    cout << "Overload manually enabled for " << studentID << ".\n";
+}
+
+// Reset semester credits (called at start of new semester)
+void System::resetSemesterForStudent(const string &studentID) {
+    Student* st = findStudent(studentID);
+    if (!st) { cout << "Student not found.\n"; return; }
+    st->getCreditAccount().resetSemesterCredits();
+    cout << "Semester credits reset for " << studentID << ".\n";
+}
 
 // ===================== Prerequisites =====================
 
