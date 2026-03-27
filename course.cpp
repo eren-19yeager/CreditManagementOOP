@@ -1,5 +1,8 @@
 #include <iostream>
 #include "course.h"
+#include <iomanip>
+#include <sstream>
+#include <fstream>
 
 Course::Course()
     : code(""), title(""), credits(0), facultyID(""),
@@ -106,6 +109,46 @@ void printCourseDetails(const Course &c) {
                   << " " << c.timeSlot.getStartTimeStr()
                   << "-" << c.timeSlot.getEndTimeStr();
     std::cout << "\n";
+}
+//Serialization
+void Course::serialize(ofstream &out) const
+{
+    out << left
+        << setw(10) << code << " | "
+        << setw(25) << title << " | "
+        << setw(5)  << credits << " | "
+        << setw(10) << getCourseTypeString() << " | "
+        << setw(10) << facultyID
+        << endl;
+}
+Course Course::deserialize(const string &line)
+{
+    stringstream ss(line);
+
+    string code, title, type, faculty;
+    int credits;
+
+    ss >> code;
+    ss.ignore(3);
+
+    getline(ss, title, '|');
+    title = title.substr(0, title.size() - 1);
+
+    ss >> credits;
+    ss.ignore(3);
+
+    ss >> type;
+    ss.ignore(3);
+
+    ss >> faculty;
+
+    Course c(code, title, credits);
+    c.assignFaculty(faculty);
+
+    if (type == "Lab") c.setCourseType(CourseType::Lab);
+    else if (type == "Online") c.setCourseType(CourseType::Online);
+
+    return c;
 }
 
 // Directly accesses private member facultyID to compare two courses
