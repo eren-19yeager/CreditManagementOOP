@@ -72,6 +72,10 @@ public:
     }
     friend void printCourseDetails(const Course &c);
     friend bool sameFaculty(const Course &a, const Course &b);
+
+    
+    void serialize(ofstream &out) const;
+    static Course deserialize(const string &line);
 };
 
 #endif
