@@ -1,30 +1,42 @@
-#include "Grades.h"
+#include "grades.h"
+#include "CourseComponent.h"
+#include <iostream>
+using namespace std;
 
-Grades::Grades(float p) {
-    percentage = p;
+Grades::Grades()
+    : studentID(""), courseCode(""), marks(0), letter("F"), component(nullptr) {}
+
+// Simple marks constructor (backwards compatible)
+Grades::Grades(string sid, string code, float m)
+    : studentID(sid), courseCode(code), marks(m), component(nullptr) {
+    computeGrade();
+}
+
+// Component-based constructor
+Grades::Grades(string sid, string code, CourseComponent* comp)
+    : studentID(sid), courseCode(code), component(comp) {
+    if (comp) {
+        marks = comp->getResult();
+    } else {
+        marks = 0;
+    }
     computeGrade();
 }
 
 void Grades::computeGrade() {
-    if(percentage >= 80){
-        gradePoint = 4.0; letter = "A+";
-    }
-    else if(percentage >= 75){
-        gradePoint = 3.75; letter = "A";
-    }
-    else if(percentage >= 70){
-        gradePoint = 3.5; letter = "A-";
-    }
-    else if(percentage >= 65){
-        gradePoint = 3.25; letter = "B+";
-    }
-    else if(percentage >= 60){
-        gradePoint = 3.0; letter = "B";
-    }
-    else{
-        gradePoint = 0.0; letter = "F";
-    }
+    if      (marks >= 80) letter = "A";
+    else if (marks >= 70) letter = "B";
+    else if (marks >= 60) letter = "C";
+    else if (marks >= 50) letter = "D";
+    else                  letter = "F";
 }
 
-float Grades::getGPA() const { return gradePoint; }
-string Grades::getLetter() const { return letter; }
+void Grades::display() const {
+    cout << courseCode << " : " << marks << " (" << letter << ")";
+    if (component) {
+        cout << "\n";
+        component->displayStatus();
+    } else {
+        cout << "\n";
+    }
+}
