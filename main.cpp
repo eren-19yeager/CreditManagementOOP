@@ -37,6 +37,9 @@ static void adminMenu(System &sys, Admin &admin) {
         cout << "9.  Set course prerequisite\n";
         cout << "10. View course prerequisites\n";
         cout << "11. Mark course completed for student\n";
+        cout << "12. View Students Table\n";
+        cout << "13. View Courses Table\n";
+        cout << "14. View Grades Table\n";
         cout << "0.  Logout\n";
         cout << "Choice: ";
         if (!(cin >> choice)) { cin.clear(); cin.ignore(1000,'\n'); continue; }
@@ -188,6 +191,15 @@ static void adminMenu(System &sys, Admin &admin) {
             cout << "Student ID (0=Back): "; cin >> studentId; if (studentId=="0") break;
             cout << "Course to mark completed (0=Back): "; cin >> courseId; if (courseId=="0") break;
             sys.markCourseCompleted(studentId, courseId); sys.saveAll(); break;
+        }
+        case 12: {
+            sys.printStudentsTable();break;
+        }
+        case 13: {
+            sys.printCoursesTable();break;
+        }
+        case 14: {
+            sys.printGradesTable();break;
         }
         default: cout << "Invalid.\n";
         }
@@ -443,6 +455,8 @@ int main() {
         }
         default: cout << "Invalid.\n";
         }
+
     }
+
     return 0;
 }
